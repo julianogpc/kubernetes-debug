@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: ds-debug-dev
+  namespace: ns-devops-dev
+  labels:
+    app: debug-dev
+spec:
+  selector:
+    matchLabels:
+      app: debug-dev
+  template:
+    metadata:
+      labels: 
+        app: debug-dev
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+        - name: cn-debug-dev
+          image: nicolaka/netshoot
+          command: 
+          - tshark
+          args:
+          - -T
+          - ek
+          securityContext:
+            privileged: true
+            capabilities:
+              add: 
+              - NET_ADMIN
+              - NET_RAW
+              - SYS_TIME
+      hostNetwork: true
